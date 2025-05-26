@@ -33,6 +33,7 @@ const issueTypeOptions = [
   { label: 'Bug', value: 'bug' },
   { label: 'Epic', value: 'epic' },
   { label: 'Story', value: 'story' },
+  { label: 'Spike', value: 'spike' },
 ]
 const currentErrors = ref<{ field: string; message: string }[][]>([])
 

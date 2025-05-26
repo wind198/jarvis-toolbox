@@ -11,6 +11,8 @@ const currentTab = ref<ITabs>('jira')
 
 <template>
   <div class="app min-w-xl shadow-sm app-container bg-white">
+    <h1 class="text-lg px-4 pt-2">Jarvis's Toolbox</h1>
+
     <n-tabs
       type="line"
       animated

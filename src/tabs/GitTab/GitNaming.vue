@@ -112,7 +112,9 @@ const removeRedundantFragmentFromPageTitle = (fragments: string[]) => {
 }
 
 const generateGitNaming = () => {
+  errorDuringGeneratingGitNaming.value = ''
   if (!isInJiraIssuePage.value.title || !isInJiraIssuePage.value.url) {
+    errorDuringGeneratingGitNaming.value = 'Jira issue title or URL is not available'
     return
   }
 
@@ -122,6 +124,8 @@ const generateGitNaming = () => {
     .filter(Boolean)
   fragments = removeRedundantFragmentFromPageTitle(fragments)
   if (fragments.length !== 3) {
+    errorDuringGeneratingGitNaming.value =
+      'Invalid Jira issue title, it should be like this: [TASK] - Add button - [ProjectA/ScreenA]'
     return
   }
   const ticketId = isInJiraIssuePage.value.url.split('/').pop()?.toUpperCase()
@@ -133,6 +137,8 @@ const generateGitNaming = () => {
     .filter(Boolean)
 
   if (!ticketId || !issueType || !action || !context) {
+    errorDuringGeneratingGitNaming.value =
+      'Invalid Jira issue title, it should be like this: [TASK] - Add button - [ProjectA/ScreenA]'
     return
   }
 
@@ -181,6 +187,8 @@ const gitNamingDataToRender = computed(() => {
   ]
 })
 
+const errorDuringGeneratingGitNaming = ref('')
+
 const showingCopiedIndicator = ref(false)
 const copyToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text)
@@ -207,9 +215,17 @@ const copyToClipboard = async (text: string) => {
       >Generate git naming</NButton
     >
 
-    <div v-if="!noGitNaming" class="git-naming-result mt-3 flex flex-col space-y-2">
+    <NText type="error" class="text-sm mt-3" v-if="errorDuringGeneratingGitNaming">{{
+      errorDuringGeneratingGitNaming
+    }}</NText>
+    <div v-else-if="!noGitNaming" class="git-naming-result mt-3 flex flex-col space-y-2">
       <div class="w-full flex space-x-2 justify-between items-center">
-        <NSelect class="w-[160px]!" v-model:value="gitNaming.actionType" :options="gitActionTypes">
+        <NSelect
+          menu-size="small"
+          class="w-[160px]!"
+          v-model:value="gitNaming.actionType"
+          :options="gitActionTypes"
+        >
         </NSelect>
         <NText type="info" class="text-sm" v-if="showingCopiedIndicator">Copied to clipboard</NText>
       </div>
